@@ -1,0 +1,196 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[czech]{babel}
+\usepackage{tabularx}
+\usepackage{hhline}
+\usepackage{url}
+\usepackage{xurl}             
+\usepackage{hyperref}
+\usepackage{biblatex}
+\usepackage{bchart}
+\usepackage{pgf-pie}  
+
+% Grafy
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.16}
+\usepgfplotslibrary{statistics}
+
+\title{Analýza aplikací na platformě Google Play}
+\author{Sergei Naumenko, Jiří Vrba}
+\date{4IT260 --- ZS 2021/2022}
+
+\newcolumntype{A}{>{\centering\arraybackslash}X}
+
+\bibliography{sources.bib}
+
+\begin{document}
+
+\maketitle
+
+\begin{minipage}{\dimexpr \linewidth - 15pt \relax}
+            \centering
+\includegraphics[width=130pt]{FIS_2_logo_cb_rgb.png}
+\end{minipage}
+
+\newpage
+
+\section*{Aplikace platformy Google Play}
+\par
+Daty, se kterými budeme v rámci semestrální práce pracovat, jsou aplikace z platformy Google Play. Google Play je internetový obchod s aplikacemi, 
+integrovaný v mobilním operačním systému Android. Na Google Play si může každý zakoupit vývojářskou
+licenci a publikovat své aplikace.
+Aplikace mohou být buď zdarma, nebo placené a při publikaci jsou vývojářem zařazeny do jedné z
+kategorií, což je výčet hodnot definovaný společností Google, která obchod Google Play provozuje.
+Po publikaci si mohou uživatelé obchodu aplikaci stáhnout do 
+svého zařízení a následně k aplikaci napsat své hodnocení. Hodnocení se skládá z počtu hvězdiček,
+a slovního ohodnocení (viz dále v sekci seznámení se s daty).
+
+Hodnocení je důležité pro určování pořadí ve kterém se aplikace v obchodě zobrazují, to je určeno primárně podle počtu stažení aplikace a následně podle průměrného hodnocení.
+
+\section*{Seznámení s daty}
+\par
+Data se skládají z dvou datasetů. První se zabývá aplikacemi publikovanými na platformu Google Play, druhý pak speciálně jejich hodnocením.
+
+\subsection*{Aplikace publikované na Google Play}
+Prvním datasetem je soubor \verb|googleplaystore.csv|. Obsahuje 10840 záznamů a po vyřazení 
+duplicit a chybným záznamů jsou k dispozici informace o 9656 aplikacích publikovaných na platfomě Google Play.
+Každý záznam obsahuje následující informace:
+
+\vspace*{1em}
+\noindent \begin{tabularx}{\linewidth}{|l|l|X|}
+    \hline
+    Název sloupce & Datový typ & Popis                                    \\ \hhline {|=|=|=|}
+    App            & Text    & Název aplikace                             \\ \hline
+    Category       & Text    & Kategorie, do které byla aplikace zařazena \\ \hline
+    Rating         & Float   & Průměrné hodnocení aplikace (počet hvězd)  \\ \hline
+    Reviews        & Integer & Počet hodnocení dané aplikace              \\ \hline
+    Size           & Text    & Velikost aplikace, reprezentováno buď číselně (15M), nebo pomocí textu (např. hodnota ,,Varies with device'')\\ \hline
+    Installs       & Integer & Počet stažení dané aplikace                \\ \hline
+    Type           & Text    & Zdali je aplikace zdarma nebo placená      \\ \hline
+    Price          & Float   & Cena aplikace v dolarech                   \\ \hline
+    Content Rating & Text    & Věková skupina, které je aplikace určena   \\ \hline
+    Genres         & Text    & Seznam žánrů, do které aplikace spadá      \\ \hline
+    Last updated   & Date    & Den poslendí aktualizace aplikace          \\ \hline
+    Current Ver    & Text    & Verze aplikace (např. 2.0.0)               \\ \hline
+    Android Ver    & Text    & Minimální požadovaná verze OS Android      \\ \hline
+\end{tabularx}
+
+\subsubsection*{Poznámky k datům}
+\begin{itemize}
+    \item Hodnocení (sloupec \textbf{Rating}) může nabývat buď hodnoty ,,NaN'', pokud není k dispozici pro danou aplikaci dostatečné
+    množství hodnocení aby bylo relevantní hodnotu zobrazovat. Nebo může nabývat desetinných čísel s přesností na 1 desetinné místo 
+    od 1.0 do 5.0 včetně.
+    
+    \item Žánrů může být ve sloupci \textbf{Genres} i více, v takovém případě jsou hodnoty odděleny středníkem.
+\end{itemize}
+
+\subsubsection*{Zajímavé poznatky z dat}
+\begin{itemize}
+    % \item V souboru \textbf{10841} aplikací se nachází pouze \textbf{9656} unikátní záznamů.
+    \item Set aplikací je relativně malý vzorek celkového počtu aplikací, kterých je na platformě 
+    podle zdroje AppBrain celkem přes 2 780 000 \cite{appbrain_number_of_apps_google_play}
+    
+    \item Nejpopulárnější kategorií aplikací je kategorie \textbf{FAMILY} (18.19\% instancí), 
+        kterou následuje kategorie \textbf{GAME} (10.55\% instancí) a následně kategorie \textbf{TOOLS} 
+        (7.78\% instancí)
+        
+    \begin{bchart}[max=2000, step=200, width=\linewidth]
+        \bcbar[text=FAMILY, color=red!50]{1832} \smallskip
+        \bcbar[text=GAME, color=red!45]{959} \smallskip
+        \bcbar[text=TOOLS, color=red!40]{827} \smallskip
+        \bcbar[text=BUSINESS, color=red!35]{420} \smallskip
+        \bcbar[text=MEDICAL, color=red!30]{395} \smallskip
+        \bcbar[text=PERSONAL..., color=red!25]{375} \smallskip
+        \bcbar[text=PRODUCTI..., color=red!20]{374} \smallskip
+        \bcbar[text=LIFESTYLE, color=red!15]{369} \smallskip
+        \bcbar[text=FINANCE, color=red!10]{345} \smallskip
+        \bcbar[text=SPORTS, color=red!5]{325}
+        \bcxlabel{Počet aplikací v 10 nejpopulárnějších kategoriích}
+    \end{bchart}
+        
+    \item \textbf{92.62\%} instancí jsou aplikace poskytované zdarma, 
+    podle zdroje Statista je v obchodě Google Play celkové zastoupení aplikací poskytovaných zdarma \textbf{96.9\%} \cite{statista_free_paid_apps}
+    
+    \item \textbf{80.39\%} instancí jsou aplikace určené pro všechny věkové skupiny (\textbf{Everyone})
+\end{itemize}
+
+
+\clearpage
+
+\subsection*{Hodnocení aplikací z platformy Google Play}
+\par
+Druhým datovým setem je soubor \verb|googleplaystore_user_reviews.csv|. Obsahuje sadu hodnocení aplikací, kde bylo pomocí strojového učení klasifikováno vyznění jako pozitivní, neutrální, pozitivní nebo neurčené.
+
+Tato hodnocení byla sesbírána celkem z \textbf{1074} aplikací a přeložena do angličtiny, před samotnou klasifikací povahy hodnocení.
+
+Celkem se jedná o \textbf{64295} hodnocení, u \textbf{37432} z nich byla klasifikována povaha hodnocení.
+
+Každý záznam obsahuje následující informace:
+
+\vspace*{1em}
+\noindent \begin{tabularx}{\linewidth}{|l|l|X|}
+    \hline
+    Název sloupce & Datový typ & Popis                                    \\ \hhline {|=|=|=|}
+    App                & Text    & Název aplikace                             \\ \hline
+    Translated Review  & Text    & Text hodnocení přeložený do angličtiny \\ \hline
+    Sentiment          & Text    & Pohava hodnocení (pozitivní, negativní, neutrální) \\ \hline
+    Sentiment Polarity & Float & Polarita hodnocení (jak moc je hodnocení pozitivní nebo negativní)                \\ \hline
+    Sentiment Subjectivity & Float    & Predikovaná míra subjektivity hodnocení \\ \hline
+\end{tabularx}
+
+\subsubsection*{Poznámky k datům}
+\begin{itemize}
+    \item Povaha hodnocení (sloupec \textbf{Sentiment}) může nabývat hodnoty ,,NaN'', pokud model
+    pro klasifikaci povahy nebyl schopný určit povahu, a tím pádem tedy i míru subjektivity
+    
+    \item Polarita hodnocení povahy (sloupec \textbf{Sentiment Polarity}) desetinné je číslo od -1 do 1 udávající konfidenci modelu (1 - model klasifikuje hodnocení jako velice pozitivní, 0 - model klasifikuje hodnocení jako neutrální, -1 - model klasifikuje hodnocení jako negativní)
+
+    \item Subjektivita hodnocení (sloupec \textbf{Sentiment Subjectivity}) je rovněž desetinné číslo od 0 do 1 včentě (1 - hodnocení je podle klasifikace maximálně subjektivní, 0 - hodnocení je podle klasifikace maximálně objektivní)
+\end{itemize}
+
+\clearpage
+
+\subsubsection*{Zajímavé poznatky z dat}
+\begin{itemize}
+    % \item V souboru \textbf{10841} aplikací se nachází pouze \textbf{9656} unikátní záznamů.
+    \item U 41.78\% instancí není povaha hodnocení klasifikována, u 37.32\% instancí je povaha klasifikovaná jako pozitivní (Positive), u 12.86\% instancí jako negativní (Negative) a u 8.03\% jako neutrální (Neutral).
+        
+    \item Negativní a pozitivní hodnocení jsou průměrně více subjektivní než hodnocení klasifikovaná jako neutrální. U negativních hodnocení je průměrná míra subjektivity 0.53, u pozitivních hodnocení je 0.56 a u neurálních hodnocení pouze 0.07.
+
+\end{itemize}
+
+\vspace{50pt}
+
+\begin{minipage}{\linewidth}
+            \centering
+\begin{tikzpicture}
+
+    \pie[
+    color = {
+        yellow!30,
+        red!30,
+        green!30,
+        gray!30
+        },
+        rotate = 90
+]{
+    8.03/Neutral,
+    	12.86/Negative,
+    	37.32/Positive,
+    	41.78/NaN
+    	}
+	
+\end{tikzpicture}
+\\
+            \caption{Rozložení klasifikace povahy v datasetu}
+        \end{minipage}
+\begin{figure}
+\centering
+\end{figure}
+
+
+\clearpage
+
+\printbibliography
+
+\end{document}
